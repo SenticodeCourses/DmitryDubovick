@@ -1,8 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
+import time
+import random
 
 
 def get_html(url, header):
+    time.sleep(random.uniform(1, 3))
     r = requests.get(url, headers = header)
     return r.content
 
