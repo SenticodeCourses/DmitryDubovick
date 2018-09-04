@@ -4,12 +4,13 @@ from flask import jsonify
 from country import Country
 from city import City
 from region import Region
+from copy import deepcopy
 
 
 class MyJSONEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Country):
-            result = dict(obj.__dict__)
+            result = deepcopy(obj.__dict__)
             if result['regions']:
                 names = []
                 for i in result['regions'].values():
@@ -18,7 +19,7 @@ class MyJSONEncoder(JSONEncoder):
             return result
 
         if isinstance(obj, Region):
-            result = dict(obj.__dict__)
+            result = deepcopy(obj.__dict__)
             if result['cities']:
                 names = []
                 for i in result['cities'].values():
@@ -27,7 +28,7 @@ class MyJSONEncoder(JSONEncoder):
             return result
 
         if isinstance(obj, City):
-            result = dict(obj.__dict__)
+            result = deepcopy(obj.__dict__)
             return result
 
         return super(MyJSONEncoder, self).default(obj)
