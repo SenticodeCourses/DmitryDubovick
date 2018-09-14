@@ -1,14 +1,4 @@
-from flask import Flask
-from flask.json import JSONEncoder
-from flask import jsonify
 import pymongo as pm
-from bson import ObjectId
-
-class MyJSONEncoder(JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ObjectId):
-            return str(o)
-        return super(MyJSONEncoder, self).default(o)
 
 
 client = pm.MongoClient("localhost", 27017)
@@ -19,24 +9,27 @@ db = client['preferences']
 coll = db['admin_pref']
 # coll.insert_one(admin_info)
 
-# collist = db.list_collection_names()
-# if 'admin_pref' in collist:
-#     print(1)
-# else: print(0)
+
+def update_name(new_name):
+    if type(new_name) == str:
+        coll.update_one({}, {"$set": {'name': new_name}})
+    else:
+        print('Wrong name!')
 
 
-app = Flask(__name__)
-app.json_encoder = MyJSONEncoder
+def update_age(age):
+    if age.isdigit() and 0 < int(age) < 125:
+        coll.update_one({}, {"$set": {'age': int(age)}})
+    else:
+        print('Wrong age!')
 
 
-@app.route('/preferences/<pref>', strict_slashes=False)
-def pref(pref):
-    return jsonify(coll.find()[0][pref])
+def update_phone(phone):
+    if phone.isdigit():
+        coll.update_one({}, {"$set": {'phone_number': int(phone)}})
+    else:
+        print('Wrong number!')
 
 
-@app.route('/preferences/', strict_slashes=False)
-def all_prefs():
-    return jsonify(coll.find_one())
 
 
-app.run('localhost', '8080')
